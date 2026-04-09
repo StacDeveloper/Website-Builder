@@ -7,10 +7,12 @@ import MyProjects from './pages/MyProjects'
 import Preview from './pages/Preview'
 import Community from './pages/Community'
 import View from './pages/View'
+import Navbar from './components/Navbar'
 
 const App: React.FC = () => {
   return (
     <div>
+      <Navbar/>
       <Routes>
         <Route>
           <Route path='/' element={<Home />} />
