@@ -25,6 +25,8 @@ dist-ssr
 src/schema.prisma
 src/System Prompt.txt
 my.pdf
+Readme2.ts
+types/Readme2.ts
 
 
 
