@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import type { Project } from '..'
-import { Loader2Icon, Plus, PlusIcon, TrashIcon } from 'lucide-react'
+import { Loader2Icon, TrashIcon } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import { dummyProjects } from '../types/assets'
 import Footer from '../components/Footer'
@@ -38,7 +38,7 @@ const Community = () => {
             {projects.map((proj) => (
               <Link
                 to={`/view/${proj.id}`}
-                key={proj.id} target='_blank' className='w-72 max-sm:max-auto cursor-pointer bg-gray-900/60 border border-gray-700 rounded-lg overflow-hidden hover:border-indigo-800/80 transition-all duration-300'>
+                key={proj.id} target='_blank' className='w-72 max-sm:max-auto cursor-pointer bg-gray-900/60 border border-gray-700 rounded-lg overflow-hidden hover:border-indigo-800/80 transition-all duration-300 hover:opacity-50'>
                 <div className='relative w-full h-40 bg-gray-900 overflow-hidden border-b border-gray-800'>
                   {proj.current_code ? (
                     <iframe
@@ -59,16 +59,12 @@ const Community = () => {
                     <button className='px-2.5 py-0.5 mt-1 ml-2 text-xs bg-gray-800 border border-gray-700 rounded-full'>Website</button>
                   </div>
                   <p className='text-gray-400 mt-1 text-sm line-clamp-1'>{proj.initial_prompt}</p>
-                  <div onClick={(e) => e.stopPropagation()} className='flex justify-between items-center mt-6'>
+                  <div className='flex justify-between items-center mt-6'>
                     <span className='text-xs text-gray-500'>{new Date(proj.createdAt).toLocaleDateString()}</span>
                     <div className='flex gap-3 text-white text-sm'>
-                      <button onClick={() => navigate(`/preview/${proj.id}`)} className='px-3 py-1.5 bg-white/10 hover:bg-white/15 rounded-md transition-all'>Preview</button>
-                      <button onClick={() => navigate(`/projects/${proj.id}`)} className='px-3 py-1.5 bg-white/10 hover:bg-white/15 rounded-md transition-colors'>Open</button>
+                      <button  className='px-3 py-1.5 bg-white/10 hover:bg-white/15 rounded-md  transition-colors flex items-center gap-2 '><span className='bg-gray-200 size-4.5 rounded-full text-black font-semibold flex items-center justify-center'>{proj?.user?.name?.slice(0, 1)}</span>{proj?.user?.name}</button>
                     </div>
                   </div>
-                </div>
-                <div onClick={(e) => e.stopPropagation()}>
-                  <TrashIcon className='absolute top-3 right-3 scale-0 group-hover:scale-100 bg-white p-1.5 size-7 rounded text-red-500 text-xl cursor-pointer transition-all' onClick={() => deleteProject(proj.id)} />
                 </div>
               </Link>
             ))}
