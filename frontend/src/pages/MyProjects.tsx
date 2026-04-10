@@ -3,6 +3,7 @@ import type { Project } from '..'
 import { Loader2Icon, Plus, PlusIcon, TrashIcon } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { dummyProjects } from '../types/assets'
+import Footer from '../components/Footer'
 
 const MyProjects = () => {
 
@@ -82,6 +83,7 @@ const MyProjects = () => {
           </button>
         </div>
       )}
+      <Footer/>
     </div>
   )
 }
