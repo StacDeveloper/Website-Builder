@@ -16,9 +16,20 @@ const Sidebar = ({ isMenuOpen, project, setProject, isGenerating, SetIsGeneratin
 
     const [input, SetInput] = useState<string>("")
     const messageRef = useRef<HTMLDivElement>(null)
+
     const handleRollBack = async (versionId: Version["id"]) => {
 
     }
+
+    const handleRevisions = async (e: React.SubmitEvent) => {
+        e.preventDefault()
+        SetIsGenerating(true)
+        setTimeout(() => {
+            SetIsGenerating(false)
+        }, 3000);
+    }
+
+
 
     useEffect(() => {
         if (messageRef.current) {
@@ -55,6 +66,7 @@ const Sidebar = ({ isMenuOpen, project, setProject, isGenerating, SetIsGeneratin
                             )
                         } else {
                             const ver = msg as Version
+
                             return (
                                 <div key={ver.id} className='w-4/5 mx-auto my-2 p-3 rounded-xl bg-gray-800 text-gray-100 shadow flex flex-col gap-2'>
                                     <div className='text-xs font-medium'>
@@ -89,10 +101,10 @@ const Sidebar = ({ isMenuOpen, project, setProject, isGenerating, SetIsGeneratin
                     <div ref={messageRef} />
                 </div>
                 {/* Input Area */}
-                <form className='m-3 relative'>
+                <form onSubmit={handleRevisions} className='m-3 relative'>
                     <div className='flex items-center gap-2'>
                         <textarea onChange={(e) => SetInput(e.target.value)} value={input} rows={4} placeholder='Describe your website or request changes...' className='flex-1 p-3 rounded-xl resize-none text-sm outline-none ring ring-gray-700 focus:ring-indigo-500 bg-gray-800 text-gray-100 placeholder-gray-400 transition-all' disabled={isGenerating} />
-                        <button>
+                        <button disabled={isGenerating || !input.trim()} className='absolute bottom-2.5 right-2.5 rounded-full bg-linear-to-r from-indigo-500 hover:from-indigo-600 hover:to-indigo-700 text-white tranistion-colors disabled:opacity-60'>
                             {isGenerating ? <Loader2Icon className='size-7 p-1.5 animate-spin text-white' /> : <SendIcon className='size-7 p-1.5 text-white' />}
                         </button>
                     </div>

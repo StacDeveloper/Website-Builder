@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import type { Project } from '..'
 import { ArrowBigDownDashIcon, EyeIcon, EyeOff, EyeOffIcon, FullscreenIcon, LaptopIcon, Loader2Icon, MessageSquareIcon, SaveIcon, SmartphoneIcon, TabletIcon, XIcon } from 'lucide-react'
-import { dummyConversations, dummyProjects } from '../types/assets'
+import { dummyConversations, dummyProjects, dummyVersion } from '../types/assets'
+import Sidebar from '../components/Sidebar'
+import ProjectPreview, { type ProjectPreviewRef } from '../components/ProjectPreview'
 
 const Projects = () => {
   const { projectId } = useParams()
@@ -17,11 +19,13 @@ const Projects = () => {
   const [isMenuOpen, SetIsMenuOpen] = useState<boolean>(false)
   const [isSaving, SetIsSaving] = useState<boolean>(false)
 
+  const previewRef = useRef<ProjectPreviewRef>(null)
+
   const fetchProject = async () => {
     const project = dummyProjects.find((project) => project.id === projectId)
     setTimeout(() => {
       if (project) {
-        SetProject({ ...project, conversation: dummyConversations })
+        SetProject({ ...project, conversation: dummyConversations, versions: dummyVersion })
         SetLoading(false)
         SetIsGenerating(project.current_code ? false : true)
       }
@@ -74,9 +78,9 @@ const Projects = () => {
         </div>
       </div>
       <div className='flex-1 flex overflow-auto'>
-        <div>Siderbar</div>
+        <Sidebar isMenuOpen={isMenuOpen} project={project} setProject={(p) => SetProject(p)} isGenerating={isGenerating} SetIsGenerating={SetIsGenerating} />
         <div className='flex-1 p-2 pl-0'>
-          Project Preview
+          <ProjectPreview ref={previewRef} isGenerating={isGenerating} project={project} device={device} />
         </div>
       </div>
     </div>
