@@ -32,6 +32,30 @@ const Projects = () => {
     }, 2000);
   }
 
+  const saveProject = () => {
+
+  }
+
+  const downloadCode = () => {
+    const code = previewRef.current?.getCode() || project?.current_code
+    if (!code) {
+      if (isGenerating) {
+        return
+      }
+      return
+    }
+    const element = document.createElement("a")
+    const file = new Blob([code], { type: "text/html" })
+    element.href = URL.createObjectURL(file)
+    element.download = "index.html"
+    document.body.appendChild(element)
+    element.click()
+  }
+
+  const togglePublish = () => {
+
+  }
+
   useEffect(() => {
     fetchProject()
   }, [])
@@ -73,7 +97,7 @@ const Projects = () => {
             Save
           </button>
           <Link className='flex items-center gap-2 px-4 py-1 rounded sm:rounded-sm border border-gray-700 hover:border-gray-500 transition-colors' to={`/preview/${projectId}`} target='_blank'> <FullscreenIcon size={16} /> Preview</Link>
-          <button className='bg-linear-to-br from-blue-700 to-blue-600 hover:from-blue-600 hover:to-blue-500 text-white px-3.5 py-1 flex items-center gap-2 rounded sm:rounded-sm transition-colors'> <ArrowBigDownDashIcon size={16} /> Download</button>
+          <button  onClick={downloadCode} className='bg-linear-to-br from-blue-700 to-blue-600 hover:from-blue-600 hover:to-blue-500 text-white px-3.5 py-1 flex items-center gap-2 rounded sm:rounded-sm transition-colors'> <ArrowBigDownDashIcon size={16} /> Download</button>
           <button className='bg-linear-to-br from-indigo-700 to-indigo-600 hover:to-indigo-500 text-white px-3.5 py-1 flex items-center gap-2 rouded sm:rounded-sm transition-colors'> {project.isPublished ? <EyeOffIcon size={16} /> : <EyeIcon size={16} />} {project.isPublished ? "Unpublish" : "Publish"}</button>
         </div>
       </div>
