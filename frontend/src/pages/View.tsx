@@ -34,7 +34,7 @@ const View = () => {
   }
 
   return (
-    <div>
+    <div className='h-screnn'>
       {code && <ProjectPreview project={{ current_code: code } as Project} isGenerating={false} showEditorPanel={false} />}
     </div>
   )

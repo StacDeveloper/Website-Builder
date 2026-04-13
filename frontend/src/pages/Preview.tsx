@@ -2,6 +2,8 @@ import { Loader2Icon } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { dummyProjects } from '../types/assets'
+import ProjectPreview from '../components/ProjectPreview'
+import type { Project } from '..'
 
 const Preview = () => {
   const { projectId, versionId } = useParams()
@@ -32,7 +34,7 @@ const Preview = () => {
   }
   return (
     <div className='h-screen'>
-
+      {code && <ProjectPreview project={{ current_code: code } as Project} isGenerating={false} showEditorPanel={false} />}
     </div>
   )
 }
