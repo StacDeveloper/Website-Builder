@@ -2,6 +2,8 @@ import express from "express"
 import type { Express, Request, Response } from "express"
 import dotenv from "dotenv"
 import cors from "cors"
+import { toNodeHandler } from "better-auth/node"
+import { auth } from "./configs/auth.js"
 dotenv.config()
 
 const corsOption = {
@@ -13,6 +15,10 @@ const PORT = process.env.PORT || 3000
 
 app.use(express.json())
 app.use(cors(corsOption))
+
+
+// middlewares
+app.use("/api/auth/{*any}", toNodeHandler(auth))
 app.use("/", (req: Request, res: Response) => {
     res.json({ success: true, message: "Server started successfully" })
 })

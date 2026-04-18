@@ -8,6 +8,8 @@ import Preview from './pages/Preview'
 import Community from './pages/Community'
 import View from './pages/View'
 import Navbar from './components/Navbar'
+import { Toaster, toast } from "sonner"
+import AuthPage from './pages/auth/AuthPage'
 
 
 const App: React.FC = () => {
@@ -17,12 +19,13 @@ const App: React.FC = () => {
 
   return (
     <div>
-
+      <Toaster />
       <img src="https://raw.githubusercontent.com/prebuiltui/prebuiltui/refs/heads/main/assets/hero/bg-gradient-2.png" className="absolute inset-0 -z-10 size-full opacity" alt="" />
-      
+
       {!hideNavBar && <Navbar />}
       <Routes>
         <Route>
+          <Route path='/auth/:pathname' element={<AuthPage />} />
           <Route path='/' element={<Home />} />
           <Route path='/pricing' element={<Pricing />} />
           <Route path='/projects/:projectId' element={<Projects />} />
