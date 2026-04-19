@@ -18,7 +18,7 @@ app.use(cors(corsOption))
 
 
 // middlewares
-app.use("/api/auth/{*any}", toNodeHandler(auth))
+app.use("/api/auth", toNodeHandler(auth))
 app.use("/", (req: Request, res: Response) => {
     res.json({ success: true, message: "Server started successfully" })
 })
