@@ -1,11 +1,11 @@
 import { betterAuth } from "better-auth"
 import { prismaAdapter } from "better-auth/adapters/prisma"
-import prisma from "./db.js"
+import { prisma } from "./db.js"
 import dotenv from "dotenv"
 dotenv.config()
 
 const trustedOrigins = process.env.TRUSTED_ORIGIN?.split(",") || ["http://localhost:5172"]
-console.log(trustedOrigins)
+
 export const auth = betterAuth({
     database: prismaAdapter(prisma, {
         provider: "postgresql"

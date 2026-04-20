@@ -4,6 +4,7 @@ import dotenv from "dotenv"
 import cors from "cors"
 import { toNodeHandler } from "better-auth/node"
 import { auth } from "./configs/auth.js"
+import userRouter from "./routes/user.routes.js"
 dotenv.config()
 
 const corsOption = {
@@ -13,12 +14,11 @@ const corsOption = {
 const app: Express = express()
 const PORT = process.env.PORT || 3000
 
-app.use(express.json())
-app.use(cors(corsOption))
-
-
 // middlewares
+app.use(express.json({ limit: "50mb" }))
+app.use(cors(corsOption))
 app.use("/api/auth", toNodeHandler(auth))
+app.use("/api/user", userRouter)
 app.use("/", (req: Request, res: Response) => {
     res.json({ success: true, message: "Server started successfully" })
 })
