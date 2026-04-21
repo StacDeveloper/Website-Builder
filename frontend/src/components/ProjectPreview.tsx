@@ -2,6 +2,7 @@ import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 're
 import type { Project } from '..'
 import { iframeScript } from '../types/assets'
 import EditorPanel from './EditorPanel'
+import LoaderSteps from './LoaderSteps'
 
 interface ProjectPreviewProps {
     project: Project
@@ -101,7 +102,7 @@ const ProjectPreview = forwardRef<ProjectPreviewRef, ProjectPreviewProps>(({ pro
                     )}
                 </>
             ) : isGenerating && (
-                <div>loading</div>
+                <LoaderSteps/>
             )}
         </div>
     )

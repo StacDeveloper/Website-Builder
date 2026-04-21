@@ -12,9 +12,9 @@ const Home = () => {
   const { data: session } = authClient.useSession()
   const [loading, SetLoading] = useState<boolean>(false);
   const [input, setInput] = useState<string>('');
-  const navigate: NavigateFunction = useNavigate()
+  const navigate = useNavigate()
 
-  const onSubmitHandler = async (e: React.SubmitEvent) => {
+  const onSubmitHandler = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
@@ -26,13 +26,12 @@ const Home = () => {
       SetLoading(true)
       const { data } = await api.post("/api/user/project", { initial_prompt: input })
       SetLoading(false)
-      navigate(`/project/${data.projectId}`)
+      navigate(`/projects/${data.projectId}`)
     } catch (error: any) {
-      toast.error(error.data.message || error.message)
-      console.log(error)
-    } finally {
       SetLoading(false)
-    }
+      toast.error(error.data.message || error.message || error.response?.data?.message)
+      console.log(error)
+    } 
   }
 
   return (

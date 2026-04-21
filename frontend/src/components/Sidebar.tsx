@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from 'react'
 import type { Message, Project, Version } from '..'
 import { BotIcon, EyeIcon, Loader2Icon, SendIcon, UserIcon } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { api } from '@/configs/axios'
+import { toast } from 'sonner'
 
 interface SidebarProps {
     isMenuOpen: boolean
@@ -16,17 +18,52 @@ const Sidebar = ({ isMenuOpen, project, setProject, isGenerating, SetIsGeneratin
 
     const [input, SetInput] = useState<string>("")
     const messageRef = useRef<HTMLDivElement>(null)
-
+    const fetchProject = async () => {
+        try {
+            const { data } = await api.get(`/api/user/project/${project.id}`)
+            setProject(data.project)
+        } catch (error: any) {
+            console.log(error)
+            toast.error(error.message)
+        }
+    }
     const handleRollBack = async (versionId: Version["id"]) => {
-
+        try {
+            const confirm = window.confirm("Are you sure you want to roleback to this version")
+            if (!confirm) return
+            SetIsGenerating(true)
+            const { data } = await api.get(`/api/project/rollback/${project.id}/${versionId}`)
+            const { data: data2 } = await api.get(`/api/user/project/${project.id}`)
+            toast.success(data.message)
+            setProject(data2.project)
+            SetInput(" ")
+            SetIsGenerating(false)
+        } catch (error: any) {
+            SetIsGenerating(false)
+            console.log(error)
+            toast.error(error.message)
+        }
     }
 
-    const handleRevisions = async (e: React.SubmitEvent) => {
+    const handleRevisions = async (e: React.FormEvent) => {
         e.preventDefault()
-        SetIsGenerating(true)
-        setTimeout(() => {
+        let interval: number | undefined
+        try {
+            SetIsGenerating(true)
+            interval = setInterval(() => {
+                fetchProject()
+            }, 5000);
+            const { data } = await api.post(`/api/project/revision/${project.id}`, { message: input })
+            toast.success(data.message)
+            SetInput(" ")
+            clearInterval(interval)
             SetIsGenerating(false)
-        }, 3000);
+        } catch (error: any) {
+            SetIsGenerating(false)
+            console.log(error)
+            toast.error(error.message)
+            clearInterval(interval)
+        }
     }
 
 

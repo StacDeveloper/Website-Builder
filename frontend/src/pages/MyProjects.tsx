@@ -4,6 +4,7 @@ import { Loader2Icon, Plus, PlusIcon, TrashIcon } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { dummyProjects } from '../types/assets'
 import Footer from '../components/Footer'
+import { api } from '@/configs/axios'
 
 const MyProjects = () => {
 
@@ -12,10 +13,10 @@ const MyProjects = () => {
   const navigate = useNavigate()
 
   const fetchProjects = async () => {
-    setTimeout(() => {
-      SetProjects(dummyProjects)
-      SetLoading(false)
-    }, 1000);
+    const { data } = await api.get("/api/user/projects")
+    SetLoading(false)
+    SetProjects(data.projects)
+    SetLoading(false)
   }
 
   const deleteProject = async (projectId: Project["id"]) => {
@@ -83,7 +84,7 @@ const MyProjects = () => {
           </button>
         </div>
       )}
-      <Footer/>
+      <Footer />
     </div>
   )
 }

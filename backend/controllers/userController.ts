@@ -131,6 +131,20 @@ export const createUserProject = async (req: Request, res: Response) => {
             ]
         })
         const code = codeGenerateResponse.choices[0].message.content || " "
+        if (!code) {
+            await prisma.conversation.create({
+                data: {
+                    role: "assistant",
+                    content: "Unable to generate code please try again",
+                    projectId:project.id
+                }
+            })
+            await prisma.user.update({
+                where: { id: userId },
+                data: { credits: { increment: 5 } }
+            })
+            return
+        }
         const version = await prisma.version.create({
             data: {
                 code: code.replace(/```[a-z]*\n?/gi, "").replace(/```$/g, "").trim(),
