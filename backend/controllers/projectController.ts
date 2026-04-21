@@ -130,3 +130,142 @@ export const makeRevison = async (req: Request, res: Response) => {
         return res.status(500).json({ success: false, message: error.message })
     }
 }
+export const rollbacktoVersion = async (req: Request, res: Response) => {
+    const userId = req.userId
+    try {
+        if (!userId) {
+            return res.status(400).json({ success: false, message: "Unauthorized" })
+        }
+        const { projectId, versionId } = req.params as { projectId: string, versionId: string }
+        const project = await prisma.websiteProject.findUnique({
+            where: { id: projectId, userId },
+            include: { versions: true }
+        })
+
+        if (!project) {
+            return res.status(404).json({ success: false, message: "Project not found" })
+        }
+        const version = project.versions.find(v => v.id === versionId)
+        if (!version) {
+            return res.status(404).json({ success: false, message: "Version not found" })
+        }
+        await prisma.websiteProject.update({
+            where: { id: projectId, userId },
+            data: {
+                current_code: version.code,
+                current_version_index: version.id
+            }
+        })
+        await prisma.conversation.create({
+            data: {
+                role: "assistant",
+                content: `I've rolled back your webiste to "${versionId}". You can preview it`,
+                projectId
+            }
+        })
+        res.status(200).json({ success: true, message: `Version rolled back to ${versionId}` })
+    } catch (error: any) {
+        console.log(error)
+        return res.status(500).json({ success: false, message: error.message })
+    }
+}
+export const deleteProject = async (req: Request, res: Response) => {
+    const userId = req.userId
+    const { projectId } = req.params as { projectId: string }
+    try {
+        if (!userId) {
+            return res.status(400).json({ success: false, message: "Unauthorized" })
+        }
+        await prisma.websiteProject.delete({
+            where: { id: projectId, userId }
+        })
+        res.status(200).json({ success: true, message: `Project deleted successfully` })
+    } catch (error: any) {
+        console.log(error)
+        return res.status(500).json({ success: false, message: error.message })
+    }
+}
+
+export const getProjectPreview = async (req: Request, res: Response) => {
+    const userId = req.userId
+    try {
+        const { projectId } = req.params as { projectId: string }
+        if (!userId) {
+            return res.status(400).json({ success: false, message: "Unauthorized" })
+        }
+        const project = await prisma.websiteProject.findFirst({
+            where: { userId, id: projectId },
+            include: { versions: true }
+        })
+
+        if (!project) {
+            return res.status(404).json({ success: true, message: "Project not found" })
+        }
+        res.status(200).json({ success: true, project })
+    } catch (error: any) {
+        console.log(error)
+        return res.status(500).json({ success: false, message: error.message })
+    }
+}
+
+export const getPublishedProject = async (req: Request, res: Response) => {
+    try {
+        const projects = await prisma.websiteProject.findMany({
+            where: { isPublished: true },
+            include: { user: true }
+        })
+        if (!projects) {
+            return res.status(404).json({ success: true, message: "Project not found" })
+        }
+        res.status(200).json({ success: true, projects })
+
+    } catch (error: any) {
+        console.log(error)
+        return res.status(500).json({ success: false, message: error.message })
+    }
+}
+
+export const getSingleProjectById = async (req: Request, res: Response) => {
+    const { projectId } = req.params as { projectId: string }
+    try {
+        const project = await prisma.websiteProject.findFirst({
+            where: { id: projectId },
+            include: { user: true }
+        })
+        if (!project || project.isPublished === false || !project.current_code) {
+            return res.status(404).json({ success: true, message: "Project not found" })
+        }
+        res.status(200).json({ success: true, code: project.current_code })
+
+    } catch (error: any) {
+        console.log(error)
+        return res.status(500).json({ success: false, message: error.message })
+    }
+}
+export const SaveProjectCode = async (req: Request, res: Response) => {
+    const userId = req.userId
+    const { projectId } = req.params as { projectId: string }
+    const { code } = req.body
+    try {
+        if (!userId || !code) {
+            return res.status(400).json({ success: false, message: !userId ? "Unauthorized" : "Code is required" })
+        }
+        const project = await prisma.websiteProject.update({
+            where: { id: projectId, userId },
+            data: {
+                current_code: code,
+                current_version_index: " "
+            }
+        })
+        if (!project) {
+            return res.status(404).json({ success: true, message: "Project does not exit to toggle" })
+        }
+        res.status(200).json({ success: true, message: "Project saved successfully" })
+
+    } catch (error: any) {
+        console.log(error)
+        return res.status(500).json({ success: false, message: error.message })
+    }
+}
+
+

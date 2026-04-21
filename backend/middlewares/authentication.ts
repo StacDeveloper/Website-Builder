@@ -4,6 +4,7 @@ import { fromNodeHeaders } from "better-auth/node";
 
 export const protect = async (req: Request, res: Response, next: NextFunction) => {
     try {
+
         const session = await auth.api.getSession({
             headers: fromNodeHeaders(req.headers)
         })
@@ -12,6 +13,7 @@ export const protect = async (req: Request, res: Response, next: NextFunction) =
             return res.status(401).json({ success: false, message: "User is not logged in" })
         }
         req.userId = session.user.id
+
         next()
     } catch (error: any) {
         console.log(error)

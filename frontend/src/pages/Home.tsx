@@ -1,26 +1,43 @@
+import { api } from '@/configs/axios';
+import { authClient } from '@/lib/auth-client';
 import { Loader2Icon } from 'lucide-react';
 import React from 'react'
 import { useState } from 'react';
+import { useNavigate, type NavigateFunction } from 'react-router-dom';
+import { toast } from 'sonner';
 
 
 const Home = () => {
 
-
+  const { data: session } = authClient.useSession()
   const [loading, SetLoading] = useState<boolean>(false);
   const [input, setInput] = useState<string>('');
+  const navigate: NavigateFunction = useNavigate()
 
   const onSubmitHandler = async (e: React.SubmitEvent) => {
     e.preventDefault();
-    SetLoading(true)
-    // API Call
-    setTimeout(() => {
+
+    try {
+      if (!session?.user) {
+        return toast.error("Please sign in to get started")
+      } else if (!input.trim()) {
+        return toast.error("Please enter the message")
+      }
+      SetLoading(true)
+      const { data } = await api.post("/api/user/project", { initial_prompt: input })
       SetLoading(false)
-    }, 3000);
+      navigate(`/project/${data.projectId}`)
+    } catch (error: any) {
+      toast.error(error.data.message || error.message)
+      console.log(error)
+    } finally {
+      SetLoading(false)
+    }
   }
 
   return (
     <section className="flex flex-col items-center text-white text-sm pb-20 px-4 font-poppins">
-      
+
       {/* BACKGROUND IMAGE */}
       <img src="https://raw.githubusercontent.com/prebuiltui/prebuiltui/refs/heads/main/assets/hero/bg-gradient-2.png" className="absolute inset-0 -z-10 size-full opacity" alt="" />
 

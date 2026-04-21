@@ -1,14 +1,29 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useState } from 'react'
 import { assets } from '../types/assets'
 import { Link, useNavigate } from 'react-router-dom'
 import { authClient } from '@/lib/auth-client'
 import { UserButton } from "@daveyplate/better-auth-ui"
+import { toast } from 'sonner'
+import { api } from '@/configs/axios'
 
 const Navbar: React.FC = () => {
     const [menuOpen, setMenuOpen] = useState<boolean>(false)
     const navigate = useNavigate()
+    const [credits, SetCredits] = useState<number>(0)
     const { data: session } = authClient.useSession()
+    const getCredits = async () => {
+        try {
+            const { data } = await api.get("/api/user/credits")
+            SetCredits(data.credits)
+        } catch (error: any) {
+            toast.error(error?.data?.message || error.message)
+        }
+    }
+    useEffect(() => {
+        if (session?.user) getCredits()
+    }, [session?.user])
+
 
     return (
         <>
@@ -33,7 +48,10 @@ const Navbar: React.FC = () => {
                         <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 5h16" /><path d="M4 12h16" /><path d="M4 19h16" /></svg>
                     </button>
                 </div>) : (
-                    <UserButton size={"icon"} />
+                    <>
+                        <button className='bg-white/10 px-6 py-1.5 text-xs sm:text-sm border text-gray-200 rounded-full'>Credits:  <span className='text-indigo-300'>{credits}</span></button>
+                        <UserButton size={"icon"} />
+                    </>
                 )}
 
             </nav>
