@@ -4,23 +4,28 @@ import { Loader2Icon, TrashIcon } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import { dummyProjects } from '../types/assets'
 import Footer from '../components/Footer'
+import { api } from '@/configs/axios'
+import { authClient } from '@/lib/auth-client'
 
 const Community = () => {
-
+  const { data: session } = authClient.useSession()
   const [loading, SetLoading] = useState<boolean>(true)
   const [projects, SetProjects] = useState<Project[]>([])
   const navigate = useNavigate()
 
   const fetchProjects = async () => {
-    setTimeout(() => {
-      SetProjects(dummyProjects)
+    try {
+      const { data } = await api.get("/api/project/published")
+      SetProjects(data.projects)
       SetLoading(false)
-    }, 1000);
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   useEffect(() => {
     fetchProjects()
-  }, [])
+  }, [session?.user])
 
   return (
     <div className='px-4 md:px-16 lg:px-24 xl:px-32'>
@@ -62,7 +67,7 @@ const Community = () => {
                   <div className='flex justify-between items-center mt-6'>
                     <span className='text-xs text-gray-500'>{new Date(proj.createdAt).toLocaleDateString()}</span>
                     <div className='flex gap-3 text-white text-sm'>
-                      <button  className='px-3 py-1.5 bg-white/10 hover:bg-white/15 rounded-md  transition-colors flex items-center gap-2 '><span className='bg-gray-200 size-4.5 rounded-full text-black font-semibold flex items-center justify-center'>{proj?.user?.name?.slice(0, 1)}</span>{proj?.user?.name}</button>
+                      <button className='px-3 py-1.5 bg-white/10 hover:bg-white/15 rounded-md  transition-colors flex items-center gap-2 '><span className='bg-gray-200 size-4.5 rounded-full text-black font-semibold flex items-center justify-center'>{proj?.user?.name?.slice(0, 1)}</span>{proj?.user?.name}</button>
                     </div>
                   </div>
                 </div>

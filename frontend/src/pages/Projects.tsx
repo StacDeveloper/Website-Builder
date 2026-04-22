@@ -35,9 +35,22 @@ const Projects = () => {
     }
   }
 
-  const saveProject = () => {
-
+  const saveProject = async () => {
+    if (!previewRef.current) return
+    const code = previewRef.current.getCode()
+    if (!code) return
+    SetIsSaving(true)
+    try {
+      const { data } = await api.put(`/api/project/save/${projectId}`, { code })
+      SetIsSaving(false)
+      toast.success(data.message)
+    } catch (error: any) {
+      SetIsSaving(false)
+      console.log(error)
+      toast.error(error.message)
+    }
   }
+
 
   const downloadCode = () => {
     const code = previewRef.current?.getCode() || project?.current_code
@@ -55,8 +68,18 @@ const Projects = () => {
     element.click()
   }
 
-  const togglePublish = () => {
-
+  const togglePublish = async () => {
+    SetIsSaving(true)
+    try {
+      const { data } = await api.get(`/api/user/publish-toggle/${projectId}`)
+      toast.success(data.message)
+      SetProject((proj) => proj ? ({ ...proj, isPublished: !proj.isPublished }) : null)
+      SetIsSaving(false)
+    } catch (error: any) {
+      SetIsSaving(false)
+      console.log(error)
+      toast.error(error.message)
+    }
   }
 
   useEffect(() => {
@@ -70,12 +93,8 @@ const Projects = () => {
 
   useEffect(() => {
     if (project && !project.current_code) {
-      const interval = setInterval(() => {
-        fetchProject()
-      }, 10000);
-      return () => clearInterval(interval)
+      fetchProject()
     }
-    fetchProject()
   }, [project])
 
   if (loading) {
@@ -110,13 +129,13 @@ const Projects = () => {
         </div>
         {/* right */}
         <div className='flex items-center justify-end gap-3 flex-1 text-xs sm:text-sm'>
-          <button disabled={isSaving} className='max-sm:hidden bg-gray-800 hover:bg-gray-700 text-white px-3.5 py-1 flex items-center gap-2 rounded sm:rounded-sm transition-colors border border-gray-700'>
+          <button disabled={isSaving} onClick={saveProject} className='max-sm:hidden bg-gray-800 hover:bg-gray-700 text-white px-3.5 py-1 flex items-center gap-2 rounded sm:rounded-sm transition-colors border border-gray-700'>
             {isSaving ? <Loader2Icon className='animate-spin' size={16} /> : <SaveIcon size={16} />}
             Save
           </button>
           <Link className='flex items-center gap-2 px-4 py-1 rounded sm:rounded-sm border border-gray-700 hover:border-gray-500 transition-colors' to={`/preview/${projectId}`} target='_blank'> <FullscreenIcon size={16} /> Preview</Link>
           <button onClick={downloadCode} className='bg-linear-to-br from-blue-700 to-blue-600 hover:from-blue-600 hover:to-blue-500 text-white px-3.5 py-1 flex items-center gap-2 rounded sm:rounded-sm transition-colors'> <ArrowBigDownDashIcon size={16} /> Download</button>
-          <button className='bg-linear-to-br from-indigo-700 to-indigo-600 hover:to-indigo-500 text-white px-3.5 py-1 flex items-center gap-2 rouded sm:rounded-sm transition-colors'> {project.isPublished ? <EyeOffIcon size={16} /> : <EyeIcon size={16} />} {project.isPublished ? "Unpublish" : "Publish"}</button>
+          <button disabled={isSaving} onClick={togglePublish} className='bg-linear-to-br from-indigo-700 to-indigo-600 hover:to-indigo-500 text-white px-3.5 py-1 flex items-center gap-2 rouded sm:rounded-sm transition-colors'> {project.isPublished ? <EyeOffIcon size={16} /> : <EyeIcon size={16} />} {project.isPublished ? "Unpublish" : "Publish"}</button>
         </div>
       </div>
       <div className='flex-1 flex overflow-auto'>

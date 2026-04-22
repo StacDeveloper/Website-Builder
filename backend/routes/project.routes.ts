@@ -8,7 +8,7 @@ projectRouter.post("/revision/:projectId", protect, makeRevison)
 projectRouter.put("/save/:projectId", protect, SaveProjectCode)
 projectRouter.get("/rollback/:projectId/:versionId", protect, rollbacktoVersion)
 projectRouter.delete("/:projectId", protect, deleteProject)
-projectRouter.get("/preview/projectId", protect, getProjectPreview)
+projectRouter.get("/preview/:projectId", protect, getProjectPreview)
 projectRouter.get("/published", getPublishedProject)
 projectRouter.get("/published/:projectId", getSingleProjectById)
 

@@ -5,26 +5,47 @@ import { useNavigate } from 'react-router-dom'
 import { dummyProjects } from '../types/assets'
 import Footer from '../components/Footer'
 import { api } from '@/configs/axios'
+import { toast } from 'sonner'
+import { authClient } from '@/lib/auth-client'
 
 const MyProjects = () => {
-
+  const { data: session, isPending } = authClient.useSession()
   const [loading, SetLoading] = useState<boolean>(true)
   const [projects, SetProjects] = useState<Project[]>([])
   const navigate = useNavigate()
 
   const fetchProjects = async () => {
-    const { data } = await api.get("/api/user/projects")
-    SetLoading(false)
-    SetProjects(data.projects)
-    SetLoading(false)
+    try {
+      const { data } = await api.get("/api/user/projects")
+      SetProjects(data.projects)
+      SetLoading(false)
+    } catch (error: any) {
+      console.log(error)
+      toast.error(error.message)
+    }
+
   }
 
   const deleteProject = async (projectId: Project["id"]) => {
-
+    try {
+      const confirm = window.confirm("Are your sure you want to delete this project")
+      if (!confirm) return
+      const { data } = await api.delete(`/api/project/${projectId}`)
+      toast.success(data.message)
+      fetchProjects()
+    } catch (error: any) {
+      console.log(error)
+      toast.error(error.message)
+    }
   }
   useEffect(() => {
-    fetchProjects()
-  }, [])
+    if (session?.user && !isPending) {
+      fetchProjects()
+    } else if (!isPending && !session?.user) {
+      navigate("/")
+      toast("Please login to view your projects")
+    }
+  }, [session?.user])
 
   return (
     <div className='px-4 md:px-16 lg:px-24 xl:px-32'>

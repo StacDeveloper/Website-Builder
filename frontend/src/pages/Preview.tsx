@@ -3,27 +3,40 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { dummyProjects } from '../types/assets'
 import ProjectPreview from '../components/ProjectPreview'
-import type { Project } from '..'
+import type { Project, Version } from '..'
+import { toast } from 'sonner'
+import { api } from '@/configs/axios'
+import { authClient } from '@/lib/auth-client'
 
 const Preview = () => {
   const { projectId, versionId } = useParams()
   const [code, SetCode] = useState<string>("")
   const [loading, SetLoading] = useState<boolean>(true)
-
+  const { data: session, isPending } = authClient.useSession()
 
   const fetchCode = async () => {
-    const code = dummyProjects.find((proj) => proj.id === projectId)?.current_code
-    setTimeout(() => {
-      if (code) {
-        SetCode(code)
-        SetLoading(false)
+    try {
+      const { data } = await api.get(`/api/project/preview/${projectId}`)
+      SetCode(data.project.current_code)
+      if (versionId) {
+        data.project.versions.forEach((ver: Version) => {
+          if (ver.id === versionId) {
+            SetCode(ver.code)
+          }
+        })
       }
-    }, 2000);
+      SetLoading(false)
+    } catch (error: any) {
+      console.log(error.message)
+      toast.error(error.message)
+    }
   }
 
   useEffect(() => {
-    fetchCode()
-  }, [])
+    if (!isPending && session?.user) {
+      fetchCode()
+    }
+  }, [session?.user])
 
   if (loading) {
     return (
