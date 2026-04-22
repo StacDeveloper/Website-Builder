@@ -16,6 +16,7 @@ const Community = () => {
   const fetchProjects = async () => {
     try {
       const { data } = await api.get("/api/project/published")
+      
       SetProjects(data.projects)
       SetLoading(false)
     } catch (error) {

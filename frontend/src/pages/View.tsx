@@ -4,6 +4,7 @@ import { dummyProjects } from '../types/assets'
 import { Loader2Icon } from 'lucide-react'
 import ProjectPreview from '../components/ProjectPreview'
 import type { Project } from '..'
+import { api } from '@/configs/axios'
 
 const View = () => {
   const { projectId } = useParams()
@@ -11,14 +12,13 @@ const View = () => {
   const [loading, SetLoading] = useState<boolean>(true)
 
   const fetchCode = async () => {
-    const code = dummyProjects.find((proj) => proj.id === projectId)?.current_code
-
-    setTimeout(() => {
-      if (code) {
-        SetCode(code)
-        SetLoading(false)
-      }
-    }, 2000);
+    try {
+      const { data } = await api.get(`/api/project/published/${projectId}`)
+      SetCode(data.code)
+      SetLoading(false)
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   useEffect(() => {
@@ -34,7 +34,7 @@ const View = () => {
   }
 
   return (
-    <div className='h-screnn'>
+    <div className='h-screen'>
       {code && <ProjectPreview project={{ current_code: code } as Project} isGenerating={false} showEditorPanel={false} />}
     </div>
   )
