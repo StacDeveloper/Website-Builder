@@ -11,6 +11,7 @@ import Navbar from './components/Navbar'
 import { Toaster, toast } from "sonner"
 import AuthPage from './pages/auth/AuthPage'
 import Settings from './pages/Settings'
+import Loading from './pages/auth/Loading'
 
 
 const App: React.FC = () => {
@@ -36,6 +37,7 @@ const App: React.FC = () => {
           <Route path='/community' element={<Community />} />
           <Route path='/view/:projectId' element={<View />} />
           <Route path='/account/settings' element={<Settings />} />
+          <Route path='/loading' element={<Loading />} />
         </Route>
       </Routes>
     </div>

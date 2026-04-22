@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
 import { appPlans } from '../types/assets'
 import Footer from '../components/Footer'
+import { authClient } from '@/lib/auth-client'
+import { toast } from 'sonner'
+import { api } from '@/configs/axios'
 
 interface Plan {
   id: string
@@ -11,12 +14,19 @@ interface Plan {
   features: string[]
 }
 
-const handlePurchase = async (planId: Plan["id"]) => {
-
-}
 
 const Pricing = () => {
   const [plans, SetPlans] = useState<Plan[]>(appPlans)
+  const { data: session } = authClient.useSession()
+  const handlePurchase = async (planId: Plan["id"]) => {
+    try {
+      if (!session?.user) return toast.error("Please login to proceed")
+      const { data } = await api.post("/api/user/purchase-credits", { planId })
+      window.location.href = data.payment_link
+    } catch (error) {
+      console.log(error)
+    }
+  }
   return (
     <div>
       <div className='w-full max-w-5xl mx-auto z-20 max-md:px-4 min-h-[80vh]'>
@@ -56,7 +66,7 @@ const Pricing = () => {
         </div>
         <p className='mx-auto text-center text-sm max-w-md mt-10 text-white/60 font-light'>Projects <span className='text-white'>Creation / Revision</span> consume <span className='text-white'>5 credits </span> . You can purchase more credits to create more projects.</p>
       </div>
-      <Footer/>
+      <Footer />
     </div>
   )
 }

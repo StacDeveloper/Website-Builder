@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import dotenv from "dotenv"
 dotenv.config()
 import Stripe from "stripe";
+import { prisma } from "../configs/db.js";
 
 export async function stripeWebHook(req: Request, res: Response) {
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string)
@@ -19,13 +20,25 @@ export async function stripeWebHook(req: Request, res: Response) {
                 case 'payment_intent.succeeded':
                     const paymentIntent = event.data.object;
                     const sessionList = await stripe.checkout.sessions.list({
-                        payment_intent:paymentIntent.id
+                        payment_intent: paymentIntent.id
                     })
-
-                case 'payment_method.attached':
-                    const paymentMethod = event.data.object;
-
-                    break;
+                    const session = sessionList.data[0]
+                    const { transactionId, appId } = session.metadata as { transactionId: string, appId: string }
+                    if (appId === "Ai-Site-Builder" && transactionId) {
+                        const transaction = await prisma.transaction.update({
+                            where: { id: transactionId },
+                            data: {
+                                isPaid: true
+                            }
+                        })
+                        await prisma.user.update({
+                            where: { id: transaction.userId },
+                            data: {
+                                credits: { increment: transaction.credits }
+                            }
+                        })
+                    }
+                    break
                 default:
                     console.log(`Unhandled event type ${event.type}.`);
             }

@@ -6,6 +6,7 @@ import { toNodeHandler } from "better-auth/node"
 import { auth } from "./configs/auth.js"
 import userRouter from "./routes/user.routes.js"
 import projectRouter from "./routes/project.routes.js"
+import { stripeWebHook } from "./controllers/stripeWebhook.js"
 dotenv.config()
 
 const corsOption = {
@@ -21,6 +22,7 @@ app.use(cors(corsOption))
 app.use("/api/auth", toNodeHandler(auth))
 app.use("/api/user", userRouter)
 app.use("/api/project", projectRouter)
+app.post("/api/stripe", express.raw({ type: "application/json" }), stripeWebHook)
 app.use("/", (req: Request, res: Response) => {
     res.json({ success: true, message: "Server started successfully" })
 })

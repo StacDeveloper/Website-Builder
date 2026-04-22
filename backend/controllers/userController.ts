@@ -295,7 +295,7 @@ export const purchaseCredits = async (req: Request, res: Response) => {
             },
             expires_at: Math.floor(Date.now() / 1000 + 30 * 60) //expires in 30 min
         })
-        res.json({ payment_link: session.url })
+        res.status(200).json({ success: true, payment_link: session.url })
     } catch (error: any) {
         console.log(error)
         return res.status(500).json({ success: false, message: error.message })
