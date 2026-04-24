@@ -10,6 +10,18 @@ interface ProjectPreviewProps {
     device?: "dekstop" | "phone" | "tablet"
     showEditorPanel?: boolean
 }
+type selectedElement = {
+    tagName: string;
+    className: string;
+    text: string;
+    styles: {
+        padding: string;
+        margin: string;
+        backgroundColor: string;
+        color: string;
+        fontSize: string;
+    };
+}
 
 export interface ProjectPreviewRef {
     getCode: () => string | undefined
@@ -17,9 +29,9 @@ export interface ProjectPreviewRef {
 
 const ProjectPreview = forwardRef<ProjectPreviewRef, ProjectPreviewProps>(({ project, isGenerating, device = "dekstop", showEditorPanel = true }, ref) => {
 
-    const [selectedElement, SetSelectedElement] = useState<MessageEvent | null>(null)
+    const [selectedElement, SetSelectedElement] = useState<selectedElement | null>(null)
 
-    const iframeRef = useRef<HTMLFrameElement>(null)
+    const iframeRef = useRef<HTMLIFrameElement | null>(null)
 
     const injectPreview = (html: string) => {
         if (!html) return ""
@@ -38,8 +50,8 @@ const ProjectPreview = forwardRef<ProjectPreviewRef, ProjectPreviewProps>(({ pro
             if (!doc) return undefined
             // Remvoe our selection class/ attributes /outline from all elements
             doc.querySelectorAll(".ai-selected-element,[data-ai-selected]").forEach((e) => {
-                e.classList.remove(".ai-selected-element")
-                e.removeAttribute("data-ai-selected")
+                e.classList.remove(".ai-selected-element");
+                e.removeAttribute("data-ai-selected");
                 (e as HTMLElement).style.outline = ""
             })
             // Remove injected Style and script from the document
@@ -91,18 +103,21 @@ const ProjectPreview = forwardRef<ProjectPreviewRef, ProjectPreviewProps>(({ pro
                         className={`h-full max-sm:w-full ${resolution[device]} mx-auto transition-all`}
                     />
                     {showEditorPanel && selectedElement && (
-                        <EditorPanel onUpdate={handleUpdate} selectedElement={selectedElement} onClose={() => {
-                            SetSelectedElement(null)
-                            if (iframeRef.current?.contentWindow) {
-                                iframeRef.current.contentWindow.postMessage({ type: "CLEAR_SELECTION_REQUEST" }, "*")
+                        <EditorPanel
+                            onUpdate={handleUpdate}
+                            selectedElement={selectedElement}
+                            onClose={() => {
+                                SetSelectedElement(null)
+                                if (iframeRef.current?.contentWindow) {
+                                    iframeRef.current.contentWindow.postMessage({ type: "CLEAR_SELECTION_REQUEST" }, "*")
+                                }
                             }
-                        }
 
-                        } />
+                            } />
                     )}
                 </>
             ) : isGenerating && (
-                <LoaderSteps/>
+                <LoaderSteps />
             )}
         </div>
     )

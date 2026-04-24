@@ -1,5 +1,5 @@
 import { X } from 'lucide-react'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 interface EditorPanelProps {
     selectedElement: {
@@ -13,7 +13,7 @@ interface EditorPanelProps {
             color: string
             fontSize: string
         }
-    } | null
+    }
     onUpdate: (updates: any) => void
     onClose: () => void
 
@@ -25,7 +25,7 @@ const EditorPanel = ({ selectedElement, onUpdate, onClose }: EditorPanelProps) =
 
     const handleChange = (field: string, value: string) => {
         const newValues = { ...values, [field]: value }
-        if (field in values?.styles) {
+        if (field in values?.styles!) {
             newValues.styles = { ...values?.styles, [field]: value }
         }
         Setvalues(newValues)
@@ -34,7 +34,7 @@ const EditorPanel = ({ selectedElement, onUpdate, onClose }: EditorPanelProps) =
 
     const handleStyleChange = (styleName: string, value: string) => {
         const newStyle = { ...values.styles, [styleName]: value }
-        Setvalues({ ...value, styles: newStyle })
+        Setvalues({ ...values, styles: newStyle })
         onUpdate({ style: { [styleName]: value } })
     }
 

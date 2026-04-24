@@ -1,9 +1,8 @@
 import { api } from '@/configs/axios';
 import { authClient } from '@/lib/auth-client';
 import { Loader2Icon } from 'lucide-react';
-import React from 'react'
 import { useState } from 'react';
-import { useNavigate, type NavigateFunction } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
 

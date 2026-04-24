@@ -1,7 +1,6 @@
 import { Loader2Icon } from 'lucide-react'
-import React, { useEffect, useState } from 'react'
+import  { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { dummyProjects } from '../types/assets'
 import ProjectPreview from '../components/ProjectPreview'
 import type { Project, Version } from '..'
 import { toast } from 'sonner'

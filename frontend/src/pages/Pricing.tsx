@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import  { useState } from 'react'
 import { appPlans } from '../types/assets'
 import Footer from '../components/Footer'
 import { authClient } from '@/lib/auth-client'
@@ -16,7 +16,7 @@ interface Plan {
 
 
 const Pricing = () => {
-  const [plans, SetPlans] = useState<Plan[]>(appPlans)
+  const [plans] = useState<Plan[]>(appPlans)
   const { data: session } = authClient.useSession()
   const handlePurchase = async (planId: Plan["id"]) => {
     try {
