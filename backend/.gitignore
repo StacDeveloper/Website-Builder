@@ -1,7 +1,6 @@
+# Environment
 .env
-schema.prisma
-schema2.prisma
-migrations
+
 # Logs
 logs
 *.log
@@ -11,11 +10,13 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Dependencies
 node_modules
-dist
+
+# Build artifacts (Vercel builds these itself)
 dist-ssr
 *.local
-.env
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -26,16 +27,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-src/schema.prisma
-src/System Prompt.txt
+
+# Misc
 SystemPrompt.txt
 my.pdf
 Readme2.ts
 types/Readme2.ts
-
-
-
-
-/generated/prisma
-
-/generated/prisma
