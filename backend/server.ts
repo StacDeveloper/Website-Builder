@@ -19,7 +19,7 @@ const PORT = process.env.PORT || 3000
 // middlewares
 app.use(express.json({ limit: "50mb" }))
 app.use(cors(corsOption))
-app.use("/api/auth", toNodeHandler(auth))
+app.all("/api/auth", toNodeHandler(auth))
 app.use("/api/user", userRouter)
 app.use("/api/project", projectRouter)
 app.post("/api/stripe", express.raw({ type: "application/json" }), stripeWebHook)
