@@ -12,6 +12,9 @@ dotenv.config()
 const corsOption = {
     origin: process.env.TRUSTED_ORIGIN?.split(",") || [],
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowHeaders: ["Content-Type", "Authorization", "Cookie"],
+    exposedHeaders: ["Set-Cookie"]
 }
 const app: Express = express()
 const PORT = process.env.PORT || 3000

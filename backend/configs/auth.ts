@@ -28,7 +28,8 @@ export const auth = betterAuth({
                 attributes: {
                     httpOnly: true,
                     secure: process.env.NODE_ENV === "production",
-                    sameSite: process.env.NODE_ENV === "prduction" ? "none" : "Lax",
+                    sameSite: "none",
+                    partitioned:true,
                     path: "/"
                 }
             }
