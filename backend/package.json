@@ -6,8 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "server": "nodemon --exec tsx server.ts",
-    "start": "tsx server.ts",
-    "build": "tsc"
+    "start": "node dist/server.js",
+    "build": "prisma generate && tsc && node -e \"require('fs').cpSync('generated', 'dist/generated', {recursive: true})\""
   },
   "keywords": [],
   "author": "",
