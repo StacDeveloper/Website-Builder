@@ -8,3 +8,4 @@ export const authClient = createAuthClient({
     }
 })
 export const { signIn, signUp, useSession } = authClient
+console.log(url)

@@ -4,8 +4,8 @@ import { prisma } from "./db.js"
 import dotenv from "dotenv"
 dotenv.config()
 
-const trustedOrigins = process.env.TRUSTED_ORIGIN?.split(",") || ["http://localhost:5172"]
-
+const trustedOrigins = process.env.TRUSTED_ORIGIN?.split(",") || ["http://localhost:5173"]
+const isProduction = process.env.NODE_ENV === "production"
 export const auth = betterAuth({
     database: prismaAdapter(prisma, {
         provider: "postgresql"
@@ -27,9 +27,8 @@ export const auth = betterAuth({
                 name: "auth_session",
                 attributes: {
                     httpOnly: true,
-                    secure: process.env.NODE_ENV === "production",
-                    sameSite: "none",
-                    partitioned:true,
+                    secure: isProduction,
+                    sameSite: isProduction ? "none" : "lax",
                     path: "/"
                 }
             }

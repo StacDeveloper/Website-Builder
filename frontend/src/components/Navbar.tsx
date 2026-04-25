@@ -15,14 +15,18 @@ const Navbar: React.FC = () => {
     const getCredits = async () => {
         try {
             const { data } = await api.get("/api/user/credits")
+            console.log("data-credits:", data.credits)
             SetCredits(data.credits)
         } catch (error: any) {
             toast.error(error?.data?.message || error.message)
         }
     }
     useEffect(() => {
-        if (session?.user) getCredits()
+        if (session?.user) {
+            getCredits()
+        }
     }, [session?.user])
+
 
 
     return (
