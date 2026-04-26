@@ -1,6 +1,6 @@
 import { createAuthClient } from "better-auth/react"
 
-const url = "/api"
+const url = `${window.location.origin}`
 export const authClient = createAuthClient({
     baseURL: url,
     fetchOptions: {
