@@ -19,11 +19,6 @@ const corsOption = {
 const app: Express = express()
 const PORT = process.env.PORT || 3000
 
-app.use((req, res, next) => {
-    console.log("Origin:", req.headers.origin)
-    console.log("Method:", req.method)
-    next()
-})
 app.use(cors(corsOption))
 app.use("/api/auth", toNodeHandler(auth))
 // middlewares
@@ -34,6 +29,5 @@ app.post("/api/stripe", express.raw({ type: "application/json" }), stripeWebHook
 app.use("/", (req: Request, res: Response) => {
     res.json({ success: true, message: "Server started successfully" })
 })
-console.log("TRUSTED_ORIGIN:", process.env.TRUSTED_ORIGIN)
-console.log("NODE_ENV:", process.env.NODE_ENV)
+
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`))

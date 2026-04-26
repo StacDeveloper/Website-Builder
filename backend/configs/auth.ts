@@ -27,8 +27,8 @@ export const auth = betterAuth({
                 name: "auth_session",
                 attributes: {
                     httpOnly: true,
-                    secure: isProduction,
-                    sameSite: isProduction ? "none" : "lax",
+                    secure: true,
+                    sameSite: "lax",
                     path: "/"
                 }
             }
