@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useState } from 'react'
 import { assets } from '../types/assets'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { toast } from 'sonner'
 import { api } from '@/configs/axios'
 import { getToken, useClerk, UserButton, useUser } from '@clerk/react'
@@ -9,7 +9,6 @@ import { getToken, useClerk, UserButton, useUser } from '@clerk/react'
 const Navbar: React.FC = () => {
 
     const [menuOpen, setMenuOpen] = useState<boolean>(false)
-    const navigate = useNavigate()
     const { openSignIn } = useClerk()
     const [credits, SetCredits] = useState<number>(0)
     const { user } = useUser()
