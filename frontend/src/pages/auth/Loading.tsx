@@ -1,10 +1,10 @@
-import { authClient } from '@/lib/auth-client'
+import { useUser } from '@clerk/react'
 import { Loader2Icon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 const Loading = () => {
     const [loading, SetLoading] = useState<boolean>(false)
-    const { data: session } = authClient.useSession()
+    const {user} = useUser()
     const effect = () => {
         SetLoading(true)
         window.location.href = "/"
@@ -12,7 +12,7 @@ const Loading = () => {
     }
     useEffect(() => {
         effect()
-    }, [session?.user])
+    }, [user])
 
     return !loading ? (
         <div className='h-screen flex flex-col'>

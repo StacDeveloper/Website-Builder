@@ -1,9 +1,9 @@
 import  { useState } from 'react'
 import { appPlans } from '../types/assets'
 import Footer from '../components/Footer'
-import { authClient } from '@/lib/auth-client'
 import { toast } from 'sonner'
 import { api } from '@/configs/axios'
+import { useUser } from '@clerk/react'
 
 interface Plan {
   id: string
@@ -17,10 +17,10 @@ interface Plan {
 
 const Pricing = () => {
   const [plans] = useState<Plan[]>(appPlans)
-  const { data: session } = authClient.useSession()
+  const {user} = useUser()
   const handlePurchase = async (planId: Plan["id"]) => {
     try {
-      if (!session?.user) return toast.error("Please login to proceed")
+      if (!user) return toast.error("Please login to proceed")
       const { data } = await api.post("/api/user/purchase-credits", { planId })
       window.location.href = data.payment_link
     } catch (error) {

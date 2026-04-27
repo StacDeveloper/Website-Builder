@@ -9,8 +9,6 @@ import Community from './pages/Community'
 import View from './pages/View'
 import Navbar from './components/Navbar'
 import { Toaster } from "sonner"
-import AuthPage from './pages/auth/AuthPage'
-import Settings from './pages/Settings'
 import Loading from './pages/auth/Loading'
 
 
@@ -27,7 +25,6 @@ const App: React.FC = () => {
       {!hideNavBar && <Navbar />}
       <Routes>
         <Route>
-          <Route path='/auth/:pathname' element={<AuthPage />} />
           <Route path='/' element={<Home />} />
           <Route path='/pricing' element={<Pricing />} />
           <Route path='/projects/:projectId' element={<Projects />} />
@@ -36,7 +33,6 @@ const App: React.FC = () => {
           <Route path='/preview/:projectId/:versionId' element={<Preview />} />
           <Route path='/community' element={<Community />} />
           <Route path='/view/:projectId' element={<View />} />
-          <Route path='/account/settings' element={<Settings />} />
           <Route path='/loading' element={<Loading />} />
         </Route>
       </Routes>

@@ -1,5 +1,5 @@
 import { api } from '@/configs/axios';
-import { authClient } from '@/lib/auth-client';
+import { useUser } from '@clerk/react';
 import { Loader2Icon } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -8,7 +8,7 @@ import { toast } from 'sonner';
 
 const Home = () => {
 
-  const { data: session } = authClient.useSession()
+  const {user} = useUser()
   const [loading, SetLoading] = useState<boolean>(false);
   const [input, setInput] = useState<string>('');
   const navigate = useNavigate()
@@ -17,7 +17,7 @@ const Home = () => {
     e.preventDefault();
 
     try {
-      if (!session?.user) {
+      if (!user) {
         return toast.error("Please sign in to get started")
       } else if (!input.trim()) {
         return toast.error("Please enter the message")

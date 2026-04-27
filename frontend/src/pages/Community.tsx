@@ -4,10 +4,10 @@ import { Loader2Icon } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import Footer from '../components/Footer'
 import { api } from '@/configs/axios'
-import { authClient } from '@/lib/auth-client'
+import { useUser } from '@clerk/react'
 
 const Community = () => {
-  const { data: session } = authClient.useSession()
+  const {user} = useUser()
   const [loading, SetLoading] = useState<boolean>(true)
   const [projects, SetProjects] = useState<Project[]>([])
   const navigate = useNavigate()
@@ -25,7 +25,7 @@ const Community = () => {
 
   useEffect(() => {
     fetchProjects()
-  }, [session?.user])
+  }, [user])
 
   return (
     <div className='px-4 md:px-16 lg:px-24 xl:px-32'>

@@ -2,11 +2,10 @@ import express from "express"
 import type { Express, Request, Response } from "express"
 import dotenv from "dotenv"
 import cors from "cors"
-import { toNodeHandler } from "better-auth/node"
-import { auth } from "./configs/auth.js"
 import userRouter from "./routes/user.routes.js"
 import projectRouter from "./routes/project.routes.js"
 import { stripeWebHook } from "./controllers/stripeWebhook.js"
+import { clerkMiddleware } from "@clerk/express"
 dotenv.config()
 
 const corsOption = {
@@ -20,8 +19,9 @@ const app: Express = express()
 const PORT = process.env.PORT || 3000
 
 app.use(cors(corsOption))
-app.use("/api/auth", toNodeHandler(auth))
+// app.use("/api/auth", toNodeHandler(auth))
 // middlewares
+app.use(clerkMiddleware())
 app.use(express.json({ limit: "50mb" }))
 app.use("/api/user", userRouter)
 app.use("/api/project", projectRouter)

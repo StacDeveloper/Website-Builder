@@ -5,10 +5,10 @@ import { useNavigate } from 'react-router-dom'
 import Footer from '../components/Footer'
 import { api } from '@/configs/axios'
 import { toast } from 'sonner'
-import { authClient } from '@/lib/auth-client'
+import { useUser } from '@clerk/react'
 
 const MyProjects = () => {
-  const { data: session, isPending } = authClient.useSession()
+  const { user } = useUser()
   const [loading, SetLoading] = useState<boolean>(true)
   const [projects, SetProjects] = useState<Project[]>([])
   const navigate = useNavigate()
@@ -38,13 +38,12 @@ const MyProjects = () => {
     }
   }
   useEffect(() => {
-    if (session?.user && !isPending) {
-      fetchProjects()
-    } else if (!isPending && !session?.user) {
+    if (!user) {
       navigate("/")
-      toast("Please login to view your projects")
+      toast("Please sign in to open my projects")
     }
-  }, [session?.user])
+    fetchProjects()
+  }, [user])
 
   return (
     <div className='px-4 md:px-16 lg:px-24 xl:px-32'>

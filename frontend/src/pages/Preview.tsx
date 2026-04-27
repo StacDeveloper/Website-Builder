@@ -5,13 +5,13 @@ import ProjectPreview from '../components/ProjectPreview'
 import type { Project, Version } from '..'
 import { toast } from 'sonner'
 import { api } from '@/configs/axios'
-import { authClient } from '@/lib/auth-client'
+import { useUser } from '@clerk/react'
 
 const Preview = () => {
   const { projectId, versionId } = useParams()
   const [code, SetCode] = useState<string>("")
   const [loading, SetLoading] = useState<boolean>(true)
-  const { data: session, isPending } = authClient.useSession()
+  const {user} = useUser()
 
   const fetchCode = async () => {
     try {
@@ -32,10 +32,10 @@ const Preview = () => {
   }
 
   useEffect(() => {
-    if (!isPending && session?.user) {
+    if (user) {
       fetchCode()
     }
-  }, [session?.user])
+  }, [user])
 
   if (loading) {
     return (

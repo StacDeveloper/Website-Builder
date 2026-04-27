@@ -6,14 +6,14 @@ import Sidebar from '../components/Sidebar'
 import ProjectPreview, { type ProjectPreviewRef } from '../components/ProjectPreview'
 import { toast } from 'sonner'
 import { api } from '@/configs/axios'
-import { authClient } from '@/lib/auth-client'
+import { useUser } from '@clerk/react'
 
 const Projects = () => {
   const { projectId } = useParams()
   const navigate = useNavigate()
 
   const [project, SetProject] = useState<Project | null>(null)
-  const { data: session, isPending } = authClient.useSession()
+  const { user } = useUser()
   const [loading, SetLoading] = useState<boolean>(true)
   const [isGenerating, SetIsGenerating] = useState<boolean>(true)
 
@@ -83,13 +83,12 @@ const Projects = () => {
   }
 
   useEffect(() => {
-    if (session?.user) {
-      fetchProject()
-    } else if (!isPending && !session?.user) {
+    if (!user) {
       navigate("/")
       toast("Please login to view your project")
     }
-  }, [session?.user])
+    fetchProject()
+  }, [user])
 
   useEffect(() => {
     if (project && !project.current_code) {

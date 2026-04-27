@@ -2,19 +2,21 @@ import React, { useEffect } from 'react'
 import { useState } from 'react'
 import { assets } from '../types/assets'
 import { Link, useNavigate } from 'react-router-dom'
-import { authClient } from '@/lib/auth-client'
-import { UserButton } from "@daveyplate/better-auth-ui"
 import { toast } from 'sonner'
 import { api } from '@/configs/axios'
+import { getToken, useClerk, UserButton, useUser } from '@clerk/react'
 
 const Navbar: React.FC = () => {
+
     const [menuOpen, setMenuOpen] = useState<boolean>(false)
     const navigate = useNavigate()
+    const { openSignIn } = useClerk()
     const [credits, SetCredits] = useState<number>(0)
-    const { data: session } = authClient.useSession()
+    const { user } = useUser()
     const getCredits = async () => {
         try {
-            const { data } = await api.get("/api/user/credits")
+            const token = await getToken()
+            const { data } = await api.get("/api/user/credits", { headers: { Authorization: `Bearer ${token}` } })
             console.log("data-credits:", data.credits)
             SetCredits(data.credits)
         } catch (error: any) {
@@ -22,10 +24,10 @@ const Navbar: React.FC = () => {
         }
     }
     useEffect(() => {
-        if (session?.user) {
+        if (user) {
             getCredits()
         }
-    }, [session?.user])
+    }, [user])
 
 
 
@@ -44,8 +46,8 @@ const Navbar: React.FC = () => {
 
                 </div>
 
-                {!session?.user ? (<div className="flex items-center gap-3">
-                    <button onClick={() => navigate("/auth/sigin")} className="px-6 py-1.5 max-sm:text-sm bg-indigo-600 active:scale-95 hover:bg-indigo-700 transition rounded">
+                {!user ? (<div className="flex items-center gap-3">
+                    <button onClick={() => openSignIn()} className="px-6 py-1.5 max-sm:text-sm bg-indigo-600 active:scale-95 hover:bg-indigo-700 transition rounded">
                         Get started
                     </button>
                     <button id="open-menu" className="md:hidden active:scale-90 transition" onClick={() => setMenuOpen(true)} >
@@ -54,7 +56,7 @@ const Navbar: React.FC = () => {
                 </div>) : (
                     <>
                         <button className='bg-white/10 px-6 py-1.5 text-xs sm:text-sm border text-gray-200 rounded-full'>Credits:  <span className='text-indigo-300'>{credits}</span></button>
-                        <UserButton size={"icon"} />
+                        <UserButton />
                     </>
                 )}
 
